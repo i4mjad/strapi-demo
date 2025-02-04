@@ -1,0 +1,37 @@
+services:
+  strapi:
+    build: .
+    container_name: strapi-demo
+    ports:
+      - "1337:1337"
+    volumes:
+      - .:/app
+      - /app/node_modules # Prevent overwriting with host node_modules
+    environment:
+      DATABASE_CLIENT: postgres
+      DATABASE_NAME: strapi
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USERNAME: strapi_user
+      DATABASE_PASSWORD: strapi_password
+      NODE_ENV: development
+    depends_on:
+      - postgres
+    restart: always
+
+  postgres:
+    image: postgres:15
+    container_name: postgres-strapi
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: strapi
+      POSTGRES_USER: strapi_user
+      POSTGRES_PASSWORD: strapi_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persistent storage
+
+volumes:
+  postgres_data:
+    driver: local
